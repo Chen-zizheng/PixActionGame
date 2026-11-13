@@ -1,58 +1,36 @@
 # PixActionGame
 
-一个用 Unity 制作的 **2D 像素风横版动作游戏**。
+Unity 做的 2D 像素横版动作游戏，Boss 战能完整打一场。
 
-> 当前版本仍在开发中，已实现角色移动、跳跃、冲刺、攻击、敌人行为、战斗逻辑和基础场景搭建。
+<img width="603" height="305" alt="战斗画面" src="https://github.com/user-attachments/assets/4866a1e0-2b61-48b7-b7bf-fcfe19235dc2" />
+<img width="605" height="302" alt="菜单" src="https://github.com/user-attachments/assets/082763b4-8d8b-44cc-a618-1a160e9b1741" />
 
-## 玩法
+## 能玩什么
 
-- 使用 **WASD** 控制角色移动、跳跃和冲刺
-- 使用鼠标左键攻击键进行近战攻击
-- 击败敌人并推进关卡
+WASD 移动、空格跳、Shift 冲刺、鼠标左键近战。冲刺有 0.2 秒无敌和 0.5 秒冷却，用来穿过 Boss 的招式。
 
-## 已实现内容
+玩家 50 血，受击后有 1 秒无敌和 0.25 秒击退硬直。Boss 100 血，普攻冷却 1 秒、技能冷却 5 秒，掉血到阈值以下进虚弱状态，虚弱的窗口是打输出的时间。
 
-- 角色移动、跳跃、冲刺
-- 角色攻击与战斗逻辑
-- 敌人移动、攻击与受击反馈
-- 生命/战斗相关基础系统
-- 基础场景搭建与关卡结构
-- 基于 Unity 2D URP 与 Pixel Perfect Camera 的像素风渲染
+## 代码
 
-## 技术栈
+16 个 C# 脚本，1,269 行。自写的 shader 只有一个：`Assets/Shaders/SpriteFlashRed.shader`，71 行，管受击闪红的时长和颜色曲线。
 
-- Unity
-- C#
-- 2D URP
-- Pixel Perfect Camera
+```
+Assets/Scripts/Player/   PlayerController（移动、跳跃、冲刺、攻击判定）、TriggerSender、血条
+Assets/Scripts/Boss/     BossController（普攻与技能状态机）、招式判定、受伤闪红、血条
+Assets/Scripts/Camera/   HollowKnightCamera，跟随带前瞻偏移
+Assets/Scripts/MainMenu/ 背景滚动、标题呼吸、按钮悬停缩放
+```
 
-## 运行方式
+动作切换交给两个 Animator Controller（`Player.controller`、`Boss.controller`），状态机在 Animator 里配，脚本只往里喂参数。
 
-1. 使用 Unity Hub 打开本项目
-2. 使用 **Unity 2022 LTS 或更高版本**
-3. 打开 `Assets/Scenes` 中的主场景后运行
+## 跑起来
 
-## 项目结构
-Assets/
-├── Scripts/ # 游戏逻辑脚本
-├── Scenes/ # 场景文件
-├── Prefabs/ # 预制体
-├── Materials/ # 材质
-└── Settings/ # URP / 渲染配置
-文本
+Unity 2022.3.62t7（团结引擎 1.8.5）打开仓库根目录，进 `Assets/Scenes/SampleScene.scene` 点 Play。主菜单在 `MainMenu.scene`。
 
-编辑
+## 已知问题
 
-
-
-
-## 截图 / 演示
-
-<img width="603" height="305" alt="image" src="https://github.com/user-attachments/assets/4866a1e0-2b61-48b7-b7bf-fcfe19235dc2" />
-<img width="605" height="302" alt="image" src="https://github.com/user-attachments/assets/082763b4-8d8b-44cc-a618-1a160e9b1741" />
-
-
-
-## 说明
-
-本项目为个人练习作品，部分资源可能来自 Unity 官方示例或开源素材。
+- 没有发布构建，现在只能开编辑器跑。
+- 仓库里 shader 的行数大头不是我的。TextMesh Pro 包自带 17 个 shader、2,428 行，我写的那 71 行只占全仓 shader 代码的 3%。GitHub 的语言占比按全仓行数统计，看着 ShaderLab 很高，里面大部分是包的代码。
+- 素材没有逐项记录来源，部分取自 Unity 官方示例或开源素材 [待确认: 逐个文件的来源与许可]。
+- 工程正在把 `Assets/Scripts` 重构到 `Assets/PixAction`，这份目录说明对应的是已经提交的版本，重构完成后要跟着改。
