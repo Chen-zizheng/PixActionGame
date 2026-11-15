@@ -1,36 +1,46 @@
 # PixActionGame
 
-Unity 做的 2D 像素横版动作游戏，Boss 战能完整打一场。
+用团结引擎制作的 2D 像素横版动作游戏，围绕一场 Boss 战实现移动、跳跃、近战、冲刺无敌和受击反馈。
 
 <img width="603" height="305" alt="战斗画面" src="https://github.com/user-attachments/assets/4866a1e0-2b61-48b7-b7bf-fcfe19235dc2" />
 <img width="605" height="302" alt="菜单" src="https://github.com/user-attachments/assets/082763b4-8d8b-44cc-a618-1a160e9b1741" />
 
-## 能玩什么
+## 操作与战斗
 
-WASD 移动、空格跳、Shift 冲刺、鼠标左键近战。冲刺有 0.2 秒无敌和 0.5 秒冷却，用来穿过 Boss 的招式。
+| 操作 | 按键 |
+|---|---|
+| 左右移动 | A / D 或方向键 ← / → |
+| 跳跃 | 空格 |
+| 冲刺 | 左 Shift |
+| 近战攻击 | 鼠标左键 |
 
-玩家 50 血，受击后有 1 秒无敌和 0.25 秒击退硬直。Boss 100 血，普攻冷却 1 秒、技能冷却 5 秒，掉血到阈值以下进虚弱状态，虚弱的窗口是打输出的时间。
+冲刺期间无敌；受击后有短暂无敌和击退硬直。Boss 会追踪玩家，在距离范围内切换普攻与技能，攻击判定随动画开启和关闭。
 
-## 代码
+控制器脚本的默认参数为：冲刺持续 0.2 秒、冷却 0.5 秒；受击无敌 1 秒、击退硬直 0.25 秒。具体数值可在 Inspector 中调整。
 
-16 个 C# 脚本，1,269 行。自写的 shader 只有一个：`Assets/Shaders/SpriteFlashRed.shader`，71 行，管受击闪红的时长和颜色曲线。
+## 运行
 
-```
-Assets/Scripts/Player/   PlayerController（移动、跳跃、冲刺、攻击判定）、TriggerSender、血条
-Assets/Scripts/Boss/     BossController（普攻与技能状态机）、招式判定、受伤闪红、血条
-Assets/Scripts/Camera/   HollowKnightCamera，跟随带前瞻偏移
-Assets/Scripts/MainMenu/ 背景滚动、标题呼吸、按钮悬停缩放
-```
+工程记录的版本为**团结引擎 1.8.2（2022.3.62t4）**。场景使用 `.scene` 格式，建议使用对应版本的团结引擎打开。
 
-动作切换交给两个 Animator Controller（`Player.controller`、`Boss.controller`），状态机在 Animator 里配，脚本只往里喂参数。
+1. 在团结引擎 Hub 中添加仓库根目录。
+2. 打开 `Assets/Scenes/MainMenu.scene`，点击 Play，从菜单进入游戏。
+3. 也可以直接打开 `Assets/Scenes/SampleScene.scene` 测试战斗。
 
-## 跑起来
+目前没有发布独立试玩包，需要通过编辑器运行。
 
-Unity 2022.3.62t7（团结引擎 1.8.5）打开仓库根目录，进 `Assets/Scenes/SampleScene.scene` 点 Play。主菜单在 `MainMenu.scene`。
+## 代码结构
 
-## 已知问题
+| 目录 | 内容 |
+|---|---|
+| `Assets/Scripts/Player/` | 移动、跳跃、冲刺、攻击判定与玩家血条 |
+| `Assets/Scripts/Boss/` | Boss 行为、普攻与技能判定、受伤闪红与血条 |
+| `Assets/Scripts/Camera/` | 带前瞻偏移的跟随镜头 |
+| `Assets/Scripts/MainMenu/` | 菜单跳转、背景滚动、标题与按钮动效 |
 
-- 没有发布构建，现在只能开编辑器跑。
-- 仓库里 shader 的行数大头不是我的。TextMesh Pro 包自带 17 个 shader、2,428 行，我写的那 71 行只占全仓 shader 代码的 3%。GitHub 的语言占比按全仓行数统计，看着 ShaderLab 很高，里面大部分是包的代码。
-- 素材没有逐项记录来源，部分取自 Unity 官方示例或开源素材 [待确认: 逐个文件的来源与许可]。
-- 工程正在把 `Assets/Scripts` 重构到 `Assets/PixAction`，这份目录说明对应的是已经提交的版本，重构完成后要跟着改。
+角色动作由 `Player.controller` 和 `Boss.controller` 配合脚本参数及动画事件切换。受击闪红使用 `Assets/Shaders/SpriteFlashRed.shader`。
+
+## 素材与来源
+
+TextMesh Pro 附带的 shader 属于第三方包，不计作本项目原创实现。
+
+美术等素材的逐项来源与许可尚未整理完整，原有记录提到 Unity 官方示例及开源素材，但具体文件仍需核对。**仓库公开不代表素材可以自由再分发或商用**；使用前请确认对应授权。
